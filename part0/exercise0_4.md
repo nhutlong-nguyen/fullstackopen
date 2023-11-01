@@ -4,8 +4,8 @@ sequenceDiagram
     participant Browser
     participant Server
     
-    User->>Browser: Types in new note content
-    User->>Browser: Clicks Save
+    User->>Browser: Type in new note content
+    User->>Browser: Click Save or hit Enter
 
     Browser->>Server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
     activate Server
@@ -35,5 +35,4 @@ sequenceDiagram
     deactivate Server
 
     Note right of Browser: Browser executes the callback function that renders the notes
-
 ```
