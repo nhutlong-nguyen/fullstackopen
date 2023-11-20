@@ -1,5 +1,5 @@
 # Full stack open 2023
-I am currently taking a course on [fullstackopen](https://fullstackopen.com/en/) to learn more about [Subject or Technology].
+I am currently taking a course on [fullstackopen](https://fullstackopen.com/en/) to learn more about [Web Development].
 
 ## Long Nguyen's submission repository for Fullstackopen 2023 
 - I'm taking the fullstackopen 2023 course from University of Helsinki
