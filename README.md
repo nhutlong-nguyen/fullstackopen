@@ -1,5 +1,5 @@
 # Full stack open 2023
-I am currently taking [fullstackopen](https://fullstackopen.com/en/) course from University of Helsinki about [Web Development].
+I am currently taking [fullstackopen](https://fullstackopen.com/en/) course from University of Helsinki about Web Development.
 
 ## Long Nguyen's submission repository for Fullstackopen 2023 
 - This repository is where I submit my execises and projects for this course
