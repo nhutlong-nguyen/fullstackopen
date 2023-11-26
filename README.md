@@ -1,5 +1,9 @@
-# Personal branch for fullstackopen 2023
-## Note
-- This is just my personal branch where I push my execises to github before merging them to the main branch
-- Therefore, all of my finals version of the exercises for submission are in the main branch
+# Full stack open 2023
+I am currently taking [fullstackopen](https://fullstackopen.com/en/) course from University of Helsinki about Web Development.
+
+## Nhut Long Nguyen's submission repository for Fullstackopen 2023 
+- This repository is where I submit my execises and projects for this course
+- Each directory in this repository contains the exercises for each part of the course
+- All the final answers are in the main branch of this repository
+
 
