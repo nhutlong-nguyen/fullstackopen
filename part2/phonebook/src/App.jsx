@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Filter  from './components/Filter';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
+import personService from './services/persons';
 
 
 const App = () => {
@@ -11,31 +11,71 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
 
+  //
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data);
-      });
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons);
+      })
   }, []);
 
+  // This will return an array of filtered persons (.includes() method allows partial matches) 
+  const filteredPersons = persons.filter(person => 
+    person.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
+  //Use to add or update a person 
   const addPerson = (event) => {
     event.preventDefault();
-
-    // Check if the newName already exists in the persons array
-    const nameExists = persons.some(person => person.name.toLowerCase() === newName.toLocaleLowerCase());
-    
-    if (nameExists) {
-      alert(`${newName} is already added to the phonebook`);
+    const existingPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase());
+  
+    if (existingPerson) {
+      const confirmUpdate = window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`);
+      if (confirmUpdate) {
+        const updatedPerson = { ...existingPerson, number: newNumber };
+        personService
+          .updatePerson(existingPerson.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson));
+            setNewName('');
+            setNewNumber('');
+          })
+          .catch(error => {
+            console.log("Error updating the person:", error);
+          });
+      }
     } else {
-      const newPerson = { name: newName, number: newNumber, id: persons.length + 1};
-      setPersons(persons.concat(newPerson));
+      const newPerson = { name: newName, number: newNumber };
+      personService
+        .createPerson(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson));
+          setNewName('');
+          setNewNumber('');
+        })
+        .catch(error => {
+          console.log("Error adding the person:", error);
+        });
     }
-
-    //clear the input field after submission
-    setNewName('');
-    setNewNumber('');
+  };
+  
+    // Used when deleting a person in the phonebook
+  const handleDelete = id => {
+    const person = persons.find(p => p.id === id);
+    const confirmDelete = window.confirm(`Delete ${person.name}?`);
+    
+    if (confirmDelete) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          // Only update the state if the delete request was successful
+          setPersons(persons.filter(p => p.id !== id));
+        })
+        .catch(error => {
+          console.log("Error deleting the person:", error);
+        })
+    }
   };
 
   const handleNameChange = (event) => {
@@ -50,11 +90,6 @@ const App = () => {
     setFilter(event.target.value);
   }
 
-  //Using .includes() method allows partial matches
-  const filteredPersons = persons.filter(person => 
-    person.name.toLowerCase().includes(filter.toLowerCase())
-  );
-  
   return (
     <div>
       <h2>Phonebook</h2>
@@ -73,7 +108,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons filteredPersons={filteredPersons} /> 
+      <Persons filteredPersons={filteredPersons} onDelete={handleDelete}/> 
     </div>
   );
 };
