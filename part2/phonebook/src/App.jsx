@@ -3,6 +3,7 @@ import Filter  from './components/Filter';
 import Persons from './components/Persons';
 import PersonForm from './components/PersonForm';
 import personService from './services/persons';
+import Notification from './components/Notification';
 
 
 const App = () => {
@@ -10,8 +11,9 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filter, setFilter] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(null);
 
-  //
   useEffect(() => {
     personService
       .getAll()
@@ -25,7 +27,7 @@ const App = () => {
     person.name.toLowerCase().includes(filter.toLowerCase())
   );
 
-  //Use to add or update a person 
+  //Used to add or update a person 
   const addPerson = (event) => {
     event.preventDefault();
     const existingPerson = persons.find(person => person.name.toLowerCase() === newName.toLowerCase());
@@ -40,9 +42,25 @@ const App = () => {
             setPersons(persons.map(p => p.id !== existingPerson.id ? p : returnedPerson));
             setNewName('');
             setNewNumber('');
+            setMessage(`Changed ${updatedPerson.name}'s number successfully`);
+            setMessageType('success');
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000) // Clear the message after 5 seconds
           })
           .catch(error => {
             console.log("Error updating the person:", error);
+            if (error.response && error.response.status === 404) {
+              setMessage(`Information of ${existingPerson.name} has already been removed from server`);
+              setMessageType('error'); // Set the notification type to error
+            } else {
+              // Handle other types of errors
+              setMessage('An error occurred');
+              setMessageType('error');
+            }
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000); // Clear the message after 5 seconds
           });
       }
     } else {
@@ -53,6 +71,11 @@ const App = () => {
           setPersons(persons.concat(returnedPerson));
           setNewName('');
           setNewNumber('');
+          setMessage(`Added ${returnedPerson.name} successfully`);
+          setMessageType('success');
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000) // Clear the message after 5 seconds
         })
         .catch(error => {
           console.log("Error adding the person:", error);
@@ -60,7 +83,7 @@ const App = () => {
     }
   };
   
-    // Used when deleting a person in the phonebook
+  // Used when deleting a person in the phonebook
   const handleDelete = id => {
     const person = persons.find(p => p.id === id);
     const confirmDelete = window.confirm(`Delete ${person.name}?`);
@@ -93,6 +116,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} type={messageType} />
 
       <Filter filter={filter} handleFilterChange={handleFilterChange}/>
 
