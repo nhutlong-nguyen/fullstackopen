@@ -1,9 +1,0 @@
-POST http://localhost:3003/api/blogs
-Content-Type: application/json
-
-{
-    "title" : "The King has been revived",
-    "author": "Petrosapien",
-    "url": "an url",
-    "likes": 1992327
-}
